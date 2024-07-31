@@ -26,6 +26,10 @@
 		{
 			"Name": "PixelStreaming",
 			"Enabled": true
+		},
+		{
+			"Name": "ImagePlate",
+			"Enabled": true
 		}
 	]
 }
