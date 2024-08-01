@@ -1,0 +1,38 @@
+// Copyright 2020-2021 Rapyuta Robotics Co., Ltd.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+
+#include "PredictedObject.h"
+
+// rclUE
+#include "ROS2Subscriber.h"
+#include <Msgs/ROS2PredictedObjects.h>
+
+#include "PredictedObjectsNode.generated.h"
+
+/**
+ * 
+ */
+class TURTLEBOT3_API APredictedObjectsNode
+{
+public:
+	APredictedObjectsNode();
+	~APredictedObjectsNode();
+    virtual void BeginPlay() override;
+
+    UFUNCTION()
+    void PredictedObjectsCb(const UROS2PredictedObjectsMsg* in_msg);
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UROS2NodeComponent* Node = NULL;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString TopicName = TEXT("/perception/object_recognition/objects");
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TMap<int, PredictedObject> ObjectList; 
+
+};

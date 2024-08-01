@@ -1,0 +1,60 @@
+// Copyright 2020-2021 Rapyuta Robotics Co., Ltd.
+
+
+#include "PredictedObjectsNode.h"
+
+
+APredictedObjectsNode::APredictedObjectsNode()
+{
+    Node = CreateDefaultSubobject<UROS2NodeComponent>(TEXT("ROS2NodeComponent"));
+    // these parameters can be change from BP
+    Node->Name = TEXT("predicted_object_node");
+    Node->Namespace = TEXT("cpp");
+}
+
+APredictedObjectsNode::~APredictedObjectsNode()
+{
+}
+
+void PredictedObjectsNode::BeginPlay() {
+    Super::BeginPlay();
+    Node->Init();
+
+    ROS2_CREATE_SUBSCRIBER(Node, this, TopicName, UROS2PredictedObjectsMsg::StaticClass(), &APredictedObjectsNode::PredictedObjectsCb);
+}
+
+void APredictedObjectsNode::PredictedObjectsCb(const UROS2PredictedObjectsMsg* in_msg) {
+    const UROS2PredictedObjectsMsg* predicted_objects = Cast<UROS2PredictedObjectsMsg>(in_msg);
+    for (const auto &obj : predicted_objects->Objects) {
+        FString uuid;
+        for (const int &i : obj.ObjectId) {
+            uuid += FString.FromInt(i);
+        }
+        
+        if (ObjectList.Contains(uuid)) {
+            FTransform *transform = MakeTransform(
+                obj.Kinematics.InitialPoseWithCovariance.Pose.Position, 
+                obj.Kinematics.InitiaoPoseWithCovariance.Pose.Orientation.rorator(),
+                FVector(1.0, 1.0, 1.0)
+                );
+            ObjectList[uuid].SetActorTransform(
+                transform,
+                false,
+                NULL,
+                ETeleportType::TeleportPhysics
+                );
+        } else {
+            FTransform *transform = MakeTransform(
+                obj.Kinematics.InitialPoseWithCovariance.Pose.Position, 
+                obj.Kinematics.InitiaoPoseWithCovariance.Pose.Orientation.rorator(),
+                FVector(1.0, 1.0, 1.0)
+                );
+            FActorSpawnParameters spawn_info;
+            PredictedObject* spawned_actor = GetWorld()->SpawnActor(
+                    PredictedObject::StaticClass(),
+                    transform,
+                    spawn_info
+                    );
+
+
+
