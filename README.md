@@ -1,6 +1,6 @@
 ```mermaid
 
-flowchart TD//
+flowchart TD
 
     subgraph ADS
         G(fa:fa-eye sensing)
