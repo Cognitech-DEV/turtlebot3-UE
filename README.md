@@ -24,3 +24,4 @@ flowchart TD
     F -->|Intervention|D
 
 ```
+![Screenshot from 2024-08-09 08-16-12](https://github.com/user-attachments/assets/35531a8c-c356-4ec7-8974-bf8f5bda7f90)
