@@ -20,7 +20,7 @@ APredictedObject::APredictedObject()
     StaticMesh->SetStaticMesh(Mesh);
 
     // set material
-    UMaterial* Material = LoadObject<UMaterial>(NULL, TEXT("/Game/Blueprints/AWUI/BBPredictedObjectMesh"));
+    UMaterial* Material = LoadObject<UMaterial>(NULL, TEXT("/Game/Blueprints/AWUI/MPredictedObjectBB"));
     StaticMesh->SetMaterial(0, Material);
 
     // set static mesh to root component
