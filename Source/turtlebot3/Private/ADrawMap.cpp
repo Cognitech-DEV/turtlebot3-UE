@@ -4,8 +4,31 @@
 #include "ADrawMap.h"
 
 AADrawMap::AADrawMap() {
+    // BuildMap();
+}
+
+void AADrawMap::BeginPlay() {
     ParseLanelet2();
     BuildMap();
+}
+
+void AADrawMap::OnConstruction(const FTransform& Transform) {
+    UDynamicMesh *DM = this->DynamicMeshComponent->GetDynamicMesh();
+    DM->Reset();
+    UE_LOG(LogTemp, Log, TEXT("[ADrawMap] building box")); // way
+    FGeometryScriptPrimitiveOptions primitive_options;
+    UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(
+        DM,
+        primitive_options,
+        Transform,
+        10.0,
+        10.0,
+        10.0,
+        0,
+        0,
+        0
+        );
+    Super::OnConstruction(Transform);
 }
 
 FTransform AADrawMap::MakeTransform(const FVector &location, const FRotator &rotation, const FVector &scale) {
@@ -47,13 +70,13 @@ void AADrawMap::ParseLanelet2() {
             float x=0.0, y=0.0, z=0.0;
             for (const auto& root_cc : root_c->GetChildrenNodes()) {
                 if(root_cc->GetAttribute(FString("k")) == FString("local_x")) {
-                    x = FCString::Atof(*root_cc->GetAttribute("v"));
+                    x = FCString::Atof(*root_cc->GetAttribute("v")) * 100.0;
                 } 
                 else if(root_cc->GetAttribute(FString("k")) == FString("local_y")) {
-                    y = FCString::Atof(*root_cc->GetAttribute("v"));
+                    y = FCString::Atof(*root_cc->GetAttribute("v")) * -100.0;
                 }
                 else if(root_cc->GetAttribute(FString("k")) == FString("ele")) {
-                    z = FCString::Atof(*root_cc->GetAttribute("v"));
+                    z = FCString::Atof(*root_cc->GetAttribute("v")) * 100.0;
                 }
             }
             ll_node.Location = FVector(x, y, z);
@@ -69,26 +92,42 @@ void AADrawMap::BuildMap() {
     UDynamicMesh *DM = DynamicMeshComponent->GetDynamicMesh();
     DM->Reset();
     UE_LOG(LogTemp, Log, TEXT("Start building map")); // way
+    TArray<FVector2D> vertices = {
+        FVector2D(0.0, 0.0),
+        FVector2D(10.0, 0.0),
+        FVector2D(0.0, 0.0)
+    };
+    TArray<float> emp_array;
+    FGeometryScriptPrimitiveOptions primitive_options;
+    FTransform emp_transform;
 
     for (const auto &ll_way : _way_map) {
+
         TArray<FTransform> sweep_path;
         auto &Nds = ll_way.Value.Nds;
+
         for (int i=0; i<Nds.Num()-1; ++i) {
             FRotator rot = UKismetMathLibrary::MakeRotFromX(_nd_map[Nds[i+1]].Location - _nd_map[Nds[i]].Location); 
             FTransform transform = MakeTransform(_nd_map[Nds[i]].Location, rot, FVector(0,0,0));
             sweep_path.Add(transform);
         }
+
         FRotator rot = UKismetMathLibrary::MakeRotFromX(_nd_map[Nds[Nds.Num()-1]].Location - _nd_map[Nds[Nds.Num()-2]].Location); 
-        FTransform transform = UKismetMathLibrary::MakeTransform(_nd_map[Nds[Nds.Num()-1]].Location, rot, FVector(0,0,0));
+        FTransform transform = MakeTransform(_nd_map[Nds[Nds.Num()-1]].Location, rot, FVector(0,0,0));
         sweep_path.Add(transform);
-        TArray<FVector2D> vertices = {
-            FVector2D(0.0, 0.0),
-            FVector2D(10.0, 0.0),
-            FVector2D(0.0, 0.0)
-        };
-        TArray<float> emp_array;
-        UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendSweepPolyline(DM, FGeometryScriptPrimitiveOptions(), FTransform(), vertices, sweep_path, emp_array, emp_array);
+        UE_LOG(LogTemp, Log, TEXT("xyz %f, %f, %f"), _nd_map[Nds[Nds.Num()-1]].Location[0], _nd_map[Nds[Nds.Num()-1]].Location[1], _nd_map[Nds[Nds.Num()-1]].Location[2]); // way
+        UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendSweepPolyline(
+            DM, 
+            primitive_options, 
+            emp_transform, 
+            vertices, 
+            sweep_path, 
+            emp_array, 
+            emp_array
+        );
+
 
     }
     UE_LOG(LogTemp, Log, TEXT("Finish building map")); // way
+
 }

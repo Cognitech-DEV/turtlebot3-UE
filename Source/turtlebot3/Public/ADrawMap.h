@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DynamicMeshActor.h"
 #include "GeometryActors/GeneratedDynamicMeshActor.h"
 #include "GeometryScript/MeshPrimitiveFunctions.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -34,7 +35,8 @@ struct TURTLEBOT3_API FLLWay {
  * 
  */
 UCLASS()
-class TURTLEBOT3_API AADrawMap : public AGeneratedDynamicMeshActor
+class TURTLEBOT3_API AADrawMap : public ADynamicMeshActor
+// class TURTLEBOT3_API AADrawMap : public AGeneratedDynamicMeshActor
 {
 	GENERATED_BODY()
 
@@ -47,6 +49,12 @@ class TURTLEBOT3_API AADrawMap : public AGeneratedDynamicMeshActor
         UFUNCTION(BlueprintCallable, Category="CPPBlueprintFunctionLibrary")
             void BuildMap();
 	
+        UFUNCTION(BlueprintCallable, Category="CPPBlueprintFunctionLibrary")
+            void BeginPlay() override;
+
+        UFUNCTION(BlueprintCallable, Category="CPPBlueprintFunctionLibrary")
+            void OnConstruction(const FTransform& Transform) override;
+
         UPROPERTY(EditAnywhere)
             TMap<FString, FLLWay> _way_map;
 
