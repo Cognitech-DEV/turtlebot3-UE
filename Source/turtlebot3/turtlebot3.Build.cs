@@ -9,7 +9,7 @@ public class turtlebot3 : ModuleRules
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         CppStandard = CppStandardVersion.Cpp17;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "rclUE", "RapyutaSimulationPlugins" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "rclUE", "RapyutaSimulationPlugins", "XmlParser", "GeometryScriptingEditor", "GeometryScriptingCore", "GeometryCore", "GeometryFramework" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
     }

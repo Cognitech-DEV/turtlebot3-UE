@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{00043A1C-08D8-92D6-E7D2-9790C5780816}",
+	"EngineAssociation": "{BD6AE843-4AC5-4EA0-9D63-12A409788C6D}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -10,7 +10,8 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"AIModule",
-				"Engine"
+				"Engine",
+				"GeometryScriptingEditor"
 			]
 		}
 	],
@@ -25,6 +26,14 @@
 		},
 		{
 			"Name": "PixelStreaming",
+			"Enabled": true
+		},
+		{
+			"Name": "ImagePlate",
+			"Enabled": true
+		},
+		{
+			"Name": "GeometryScripting",
 			"Enabled": true
 		}
 	]

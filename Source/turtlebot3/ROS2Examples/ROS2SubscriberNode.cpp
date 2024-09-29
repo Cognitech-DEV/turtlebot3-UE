@@ -1,6 +1,7 @@
 // Copyright 2020-2021 Rapyuta Robotics Co., Ltd.
 
 #include "ROS2SubscriberNode.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Turtlebot3_UE
 #include "turtlebot3/Turtlebot3.h"
@@ -25,6 +26,7 @@ void AROS2SubscriberNode::BeginPlay()
 void AROS2SubscriberNode::MsgCallback(const UROS2GenericMsg* InMsg)
 {
     const UROS2StrMsg* stringMsg = Cast<UROS2StrMsg>(InMsg);
+    UKismetSystemLibrary::PrintString(this, TEXT("get message"), true, true, FColor::Blue, 2.f, TEXT("None"));
     if (stringMsg)
     {
         FROSStr msg;
